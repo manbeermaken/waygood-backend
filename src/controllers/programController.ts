@@ -1,7 +1,7 @@
 ﻿import Program from "../models/Program.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import * as z from "zod";
 import HttpError from "../utils/httpError.js";
+import type { RequestHandler } from "express";
 
 const searchQueriesSchema = z.object({
   country: z.string().optional(),
@@ -27,7 +27,7 @@ const searchQueriesSchema = z.object({
 });
 
 
-const listPrograms = asyncHandler(async (req, res) => {
+export const listPrograms: RequestHandler = async (req, res) => {
   const result = searchQueriesSchema.safeParse(req.query);
   if (!result.success) {
     throw new HttpError(400, "Invalid query parameters");
@@ -107,6 +107,4 @@ const listPrograms = asyncHandler(async (req, res) => {
       totalPages: Math.ceil(total / pageSize),
     },
   });
-});
-
-export { listPrograms };
+};

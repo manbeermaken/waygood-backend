@@ -3,9 +3,9 @@ import Program from "../models/Program.js";
 import Student from "../models/Student.js";
 import redisClient from "../config/redis.js";
 import config from "../config/config.js";
-import asyncHandler from "../utils/asyncHandler.js";
+import type { RequestHandler } from "express";
 
-const getOverview = asyncHandler(async (req, res) => {
+export const getOverview: RequestHandler = async (req, res) => {
   const cacheKey = "waygood:dashboard-overview";
   const cachedPayload = await redisClient.get(cacheKey);
 
@@ -46,13 +46,15 @@ const getOverview = asyncHandler(async (req, res) => {
     topCountries,
   };
 
-  await redisClient.setEx(cacheKey, config.CACHE_TTL_SECONDS, JSON.stringify(payload));
+  await redisClient.setEx(
+    cacheKey,
+    config.CACHE_TTL_SECONDS,
+    JSON.stringify(payload),
+  );
 
   res.json({
     success: true,
     data: payload,
     meta: { cache: "miss" },
   });
-});
-
-export { getOverview };
+};

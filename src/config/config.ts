@@ -2,8 +2,8 @@
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(4000), 
-  MONGODB_URI: z.url(),
-  JWT_SECRET: z.string().min(1),
+  MONGODB_URI: z.url().default("mongodb://127.0.0.1:27017/waygood-evaluation"),
+  JWT_SECRET: z.string().min(1).default("jwt_secret"),
   JWT_EXPIRES_IN: z.string().default('1d'),
   CACHE_TTL_SECONDS: z.coerce.number().default(300),
   REDIS_URL: z.string().default("redis://localhost:6379"),
@@ -13,7 +13,8 @@ const envSchema = z.object({
 const envValidation = envSchema.safeParse(process.env);
 
 if(!envValidation.success){
-  console.log("Invalid Enviroment Variables: ", z.prettifyError(envValidation.error))
+  console.log("Invalid or missing enviroment Variables")
+  console.log(z.prettifyError(envValidation.error))
   process.exit(1)
 }
 

@@ -46,7 +46,7 @@ In current setup if user is deleted it can still access the site until token exp
 - [x] Use redis for cache
 - [x] Use zod for strict type checking
 - [x] Dockerize the app
-- [ ] Convert to express 5
+- [x] Convert to express 5
 - [ ] Refresh token and endpoint
 - [ ] Rate limiting
 - [ ] Integrate an AI endpoint

@@ -1,10 +1,10 @@
 ﻿import jwt, { type SignOptions } from "jsonwebtoken";
-import asyncHandler from "../utils/asyncHandler.js";
 import HttpError from "../utils/httpError.js";
 import Student from "../models/Student.js";
 import { StudentValidationSchema } from "../validations/student.validation.js";
 import * as z from "zod";
 import config from "../config/config.js";
+import { type RequestHandler } from "express";
 
 const StudentLoginValidationSchema = StudentValidationSchema.pick({
   email: true,
@@ -20,7 +20,7 @@ function generateTokens(id: string, role: string) {
   return token;
 }
 
-const register = asyncHandler(async (req, res) => {
+export const register: RequestHandler = async (req, res) => {
   const studentValidation = StudentValidationSchema.safeParse(req.body);
   if (!studentValidation.success) {
     const errors = z.flattenError(studentValidation.error).fieldErrors;
@@ -34,9 +34,9 @@ const register = asyncHandler(async (req, res) => {
     success: true,
     token,
   });
-});
+};
 
-const login = asyncHandler(async (req, res) => {
+export const login: RequestHandler = async (req, res) => {
   const studentValidation = StudentLoginValidationSchema.safeParse(req.body);
   if (!studentValidation.success) {
     const errors = z.flattenError(studentValidation.error).fieldErrors;
@@ -58,9 +58,9 @@ const login = asyncHandler(async (req, res) => {
     success: true,
     token,
   });
-});
+};
 
-const me = asyncHandler(async (req, res) => {
+export const me: RequestHandler = async (req, res) => {
   const { id, role } = req;
   const student = await Student.findById(id).select("-password").lean();
 
@@ -71,6 +71,4 @@ const me = asyncHandler(async (req, res) => {
     success: true,
     data: student,
   });
-});
-
-export { register, login, me };
+};

@@ -1,6 +1,6 @@
-﻿import asyncHandler from "../utils/asyncHandler.js";
+﻿import type { RequestHandler } from "express";
 
-const getHealth = asyncHandler(async (req, res) => {
+export const getHealth: RequestHandler = async (req, res) => {
   res.json({
     success: true,
     data: {
@@ -9,6 +9,4 @@ const getHealth = asyncHandler(async (req, res) => {
       status: "ok",
     },
   });
-});
-
-export { getHealth }
+};

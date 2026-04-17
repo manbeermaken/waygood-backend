@@ -2,15 +2,15 @@
 
 import config from "../config/config.js";
 import Student from "../models/Student.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import HttpError from "../utils/httpError.js";
+import type { RequestHandler } from "express";
 
 interface CustomJwtPayload extends JwtPayload {
   id: string;
   username: string;
 }
 
-const requireAuth = asyncHandler(async (req, res, next) => {
+const requireAuth: RequestHandler = async (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
@@ -37,6 +37,6 @@ const requireAuth = asyncHandler(async (req, res, next) => {
   // if (!student) {
   //   throw new HttpError(401, "Authenticated user no longer exists.");
   // }
-});
+};
 
 export { requireAuth };

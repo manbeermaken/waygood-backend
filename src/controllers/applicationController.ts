@@ -1,6 +1,5 @@
 ﻿import * as z from "zod";
 import Application from "../models/Application.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import HttpError from "../utils/httpError.js";
 import {
   createApplicationSchema,
@@ -8,8 +7,9 @@ import {
 } from "../validations/application.validation.js";
 import { mongo } from "mongoose";
 import { validStatusTransitions } from "../config/constants.js";
+import { type RequestHandler } from "express";
 
-const listApplications = asyncHandler(async (req, res) => {
+export const listApplications: RequestHandler = async (req, res) => {
   const { studentId, status } = req.query;
   const filters: any = {};
 
@@ -32,9 +32,9 @@ const listApplications = asyncHandler(async (req, res) => {
     success: true,
     data: applications,
   });
-});
+};
 
-const createApplication = asyncHandler(async (req, res) => {
+export const createApplication: RequestHandler = async (req, res) => {
   const applicationValidation = createApplicationSchema.safeParse(req.body);
   if (!applicationValidation.success) {
     const errors = z.flattenError(applicationValidation.error).fieldErrors;
@@ -56,9 +56,9 @@ const createApplication = asyncHandler(async (req, res) => {
     }
     throw new HttpError(500, "Internal server error");
   }
-});
+};
 
-const updateApplicationStatus = asyncHandler(async (req, res) => {
+export const updateApplicationStatus: RequestHandler = async (req, res) => {
   const { id } = req.params;
 
   const updateApplicationValidation =
@@ -103,6 +103,4 @@ const updateApplicationStatus = asyncHandler(async (req, res) => {
     success: true,
     data: application,
   });
-});
-
-export { createApplication, listApplications, updateApplicationStatus };
+};

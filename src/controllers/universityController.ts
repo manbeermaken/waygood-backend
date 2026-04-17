@@ -1,9 +1,9 @@
 ﻿import University from "../models/University.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import redisClient from "../config/redis.js";
 import * as z from "zod";
 import HttpError from "../utils/httpError.js";
 import config from "../config/config.js";
+import type { RequestHandler } from "express";
 
 const searchQueriesSchema = z.object({
   country: z.string().optional(),
@@ -26,7 +26,7 @@ const searchQueriesSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(10),
 });
 
-const listUniversities = asyncHandler(async (req, res) => {
+export const listUniversities: RequestHandler = async (req, res) => {
   const result = searchQueriesSchema.safeParse(req.query);
   if (!result.success) {
     throw new HttpError(400, "Invalid query parameters");
@@ -92,9 +92,9 @@ const listUniversities = asyncHandler(async (req, res) => {
       totalPages: Math.ceil(total / pageSize),
     },
   });
-});
+};
 
-const listPopularUniversities = asyncHandler(async (req, res) => {
+export const listPopularUniversities: RequestHandler = async (req, res) => {
   const cacheKey = "waygood:popular-universities";
   const cachedPayload = await redisClient.get(cacheKey);
 
@@ -126,6 +126,4 @@ const listPopularUniversities = asyncHandler(async (req, res) => {
       cache: "miss",
     },
   });
-});
-
-export { listPopularUniversities, listUniversities };
+};

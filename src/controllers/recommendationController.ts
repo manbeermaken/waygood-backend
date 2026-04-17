@@ -1,8 +1,8 @@
-﻿import asyncHandler from "../utils/asyncHandler.js";
+﻿import type { RequestHandler } from "express";
 import { buildProgramRecommendations } from "../services/recommendationService.js";
 import HttpError from "../utils/httpError.js";
 
-const getRecommendations = asyncHandler(async (req, res) => {
+export const getRecommendations: RequestHandler = async (req, res) => {
   const { studentId } = req.params;
 
   if (typeof studentId !== "string") {
@@ -23,6 +23,4 @@ const getRecommendations = asyncHandler(async (req, res) => {
     success: true,
     ...payload,
   });
-});
-
-export { getRecommendations };
+};
