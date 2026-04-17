@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: waygood-backend
+    environment:
+      - PORT=4000
+      - MONGODB_URI=mongodb://mongo:password@mongodb:27017/waygood-evaluation?authSource=admin
+      - JWT_SECRET=jwt_secret
+      - JWT_EXPIRES_IN=1d
+      - CACHE_TTL_SECONDS=300
+      - REDIS_URL=redis://redis:6379
+      - OPENAI_API_KEY=
+    ports:
+      - "4000:4000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+  
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongodb-data:/data/db
+  
+  redis:
+    image: redis:alpine
+    container_name: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mongodb-data:
