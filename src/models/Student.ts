@@ -7,17 +7,12 @@ export interface IStudentDocument extends StudentBaseType, Document {
   createdAt: Date;
   updatedAt: Date;
 }
-// 3. Define interface for Custom Instance Methods (like comparePassword)
-// This ensures TypeScript knows 'comparePassword' exists on the student document
 interface IStudentMethods {
   comparePassword(password: string): Promise<boolean>;
 }
 
-// 4. Create a specific Model type combining our data and methods
 type StudentModelType = Model<IStudentDocument, {}, IStudentMethods>;
 
-// 5. Define the Mongoose Schema (The DB Manager)
-// We pass the inferred types to the Schema constructor for strict typing
 const studentSchema = new Schema<
   IStudentDocument,
   StudentModelType,

@@ -92,7 +92,6 @@ const updateApplicationStatus = asyncHandler(async (req, res) => {
 
   application.status = newStatus;
 
-  // 5. Record a timeline/history entry
   application.timeline.push({
     status: newStatus,
     note: note || `Application status updated to ${newStatus}.`,

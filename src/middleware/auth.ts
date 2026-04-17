@@ -1,7 +1,7 @@
 ﻿import jwt, { type JwtPayload, type VerifyErrors } from "jsonwebtoken";
 
 import config from "../config/config.js";
-import tudent from "../models/Student.js";
+import Student from "../models/Student.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import HttpError from "../utils/httpError.js";
 
