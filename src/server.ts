@@ -1,9 +1,9 @@
 ﻿import app from "./app.js";
-import connectDatabase from "./config/database.js";
+import { connectDB } from "./config/database.js";
 import config from "./config/config.js";
 
 async function startServer() {
-  await connectDatabase();
+  await connectDB();
 
   app.listen(config.PORT, () => {
     console.log(`Waygood evaluation API running on port ${config.PORT}`);

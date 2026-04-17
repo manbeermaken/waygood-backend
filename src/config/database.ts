@@ -2,10 +2,14 @@
 
 import config from "./config.js";
 
-async function connectDatabase() {
+async function connectDB() {
   mongoose.set("strictQuery", true);
   await mongoose.connect(config.MONGODB_URI);
   console.log("Connected to MongoDB");
 }
 
-export default connectDatabase;
+async function disconnectDB() {
+  await mongoose.connection.close();
+}
+
+export { connectDB, disconnectDB };
