@@ -1,6 +1,5 @@
 ﻿import bcrypt from "bcrypt";
 import mongoose, { Schema, Model, Document } from "mongoose";
-import uniqueValidator from "mongoose-unique-validator";
 import { type StudentBaseType } from "../validations/student.validation.js";
 
 export interface IStudentDocument extends StudentBaseType, Document {
@@ -52,8 +51,6 @@ studentSchema.pre("save", async function hashPassword(next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
-
-studentSchema.plugin(uniqueValidator, { message: "{PATH} already exists" });
 
 studentSchema.methods.comparePassword = function comparePassword(
   password: string,

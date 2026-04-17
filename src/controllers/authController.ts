@@ -5,6 +5,7 @@ import { StudentValidationSchema } from "../validations/student.validation.js";
 import * as z from "zod";
 import config from "../config/config.js";
 import { type RequestHandler } from "express";
+import mongoose from "mongoose";
 
 const StudentLoginValidationSchema = StudentValidationSchema.pick({
   email: true,
@@ -27,13 +28,28 @@ export const register: RequestHandler = async (req, res) => {
     throw new HttpError(422, "Validation Failed", errors);
   }
 
-  const newStudent = await Student.create(studentValidation.data);
-  const token = generateTokens(newStudent._id.toString(), newStudent.role);
+  try {
+    const newStudent = await Student.create(studentValidation.data);
+    const token = generateTokens(newStudent._id.toString(), newStudent.role);
 
-  res.status(201).json({
-    success: true,
-    token,
-  });
+    res.status(201).json({
+      success: true,
+      token,
+    });
+  } catch (err: any) {
+    if (err.code === 11000) {
+      const duplicateField = Object.entries(err.keyValue)[0];
+      throw new HttpError(
+        409,
+        `A user with ${duplicateField[0]} '${duplicateField[1]}' already exists`,
+      );
+    }
+    if (err instanceof mongoose.Error.ValidationError) {
+      const messages = Object.values(err.errors).map((val) => val.message);
+      throw new HttpError(422, messages.join(", "));
+    }
+    throw new HttpError(500, "Internal server error");
+  }
 };
 
 export const login: RequestHandler = async (req, res) => {
